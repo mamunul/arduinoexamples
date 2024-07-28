@@ -11,12 +11,6 @@ double ADS1115_ADC_RESOLUTION = 65535;
 
 Adafruit_ADS1115 ads;
 
-double get_NTC_ADC()
-{
-  int16_t adc_value = ads.readADC_SingleEnded(1);
-  return double(adc_value);
-}
-
 void setup()
 {
   Serial.begin(115200);
