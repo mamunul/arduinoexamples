@@ -28,8 +28,7 @@
 #define LED_PIN PIN_PB0
 #endif
 
-void
-setup()
+void setup()
 {
   Serial.begin(9600);
   pinMode(LED_PIN, OUTPUT);
