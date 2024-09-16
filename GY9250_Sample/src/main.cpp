@@ -14,20 +14,27 @@
 
 #define SPI_CLOCK 8000000 // 8MHz clock works.
 
+#ifdef NODEMCU
+#define SPI1_SCK_PIN D5
+#define SPI1_SDI_PIN D6
+#define SPI1_SDO_PIN D7
 #define NCS_PIN D4
+#endif
 
 MPU9250 mpu(SPI_CLOCK, NCS_PIN);
 
 void setup()
 {
   Serial.begin(115200);
+#ifdef NODEMCU
   SPI.begin();
+#endif
 
   mpu.init(true);
 
   uint8_t wai = mpu.whoami();
 
-  Serial.print("address: ");// here 0x70
+  Serial.print("address: "); // here 0x70
   Serial.println(wai);
 
   mpu.calib_acc();
