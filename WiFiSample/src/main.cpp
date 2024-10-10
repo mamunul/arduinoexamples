@@ -4,20 +4,24 @@
 */
 
 #include <Arduino.h>
-// #include <ESP8266WiFi.h>
 
+#ifdef ESP8266DEVKIT
+#include <ESP8266WiFi.h>
+#else
 #include <WiFi.h>
+#endif
 
 #ifndef STASSID
 #define STASSID "WIFI-SSID"
 #define STAPSK "WIFI-PASSWORD"
 #endif
 
-const char* ssid = STASSID;
-const char* password = STAPSK;
+const char *ssid = STASSID;
+const char *password = STAPSK;
 
-void setup() {
-// enableWiFiAtBootTime(); 
+void setup()
+{
+  // enableWiFiAtBootTime();
   Serial.begin(115200);
 
   // We start by connecting to a WiFi network
@@ -39,10 +43,11 @@ void setup() {
 
   WiFi.begin(ssid, password);
 
-  WiFi.printDiag(Serial);
+  // WiFi.printDiag(Serial);
   Serial.printf("Connection status: %d\n", WiFi.status());
 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -53,5 +58,6 @@ void setup() {
   Serial.println(WiFi.localIP());
 }
 
-void loop() {
+void loop()
+{
 }

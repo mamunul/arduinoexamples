@@ -28,9 +28,19 @@
 #define LED_PIN PIN_PB0
 #endif
 
+#define PIN_COUNT 19
+
+int pins[PIN_COUNT] = {2, 4, 5, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33};
+
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  // for (int i = 0; i < PIN_COUNT; i++)
+  // {
+  //   if (pins[i] == 15)
+  //     continue;
+  //   pinMode(pins[i], OUTPUT);
+  // }
   pinMode(LED_PIN, OUTPUT);
   Serial.println("setup");
 }
@@ -38,8 +48,20 @@ void setup()
 void loop()
 {
   Serial.println("loop1");
+  // for (int i = 0; i < PIN_COUNT; i++)
+  // {
+  //   if (pins[i] == 15)
+  //     continue;
+  //   digitalWrite(pins[i], HIGH);
+  // }
   digitalWrite(LED_PIN, HIGH);
   delay(1000);
+  // for (int i = 0; i < PIN_COUNT; i++)
+  // {
+  //   if (pins[i] == 15)
+  //     continue;
+  //   digitalWrite(pins[i], LOW);
+  // }
   digitalWrite(LED_PIN, LOW);
   delay(1000);
 }
