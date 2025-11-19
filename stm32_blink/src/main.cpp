@@ -2,11 +2,12 @@
 
 // define things
 static int32_t count_pressed = 0;
-static const int32_t wait = 1000;
+static const int32_t wait = 2000;
 // int btn = USER_BTN;
 int led = LED_BUILTIN;
 
 int pins[5] = {led, PA4, PA5, PA6, PA7};
+// int pins[5] = {PC9, PC8, PC10, PC11, PD2};
 
 void setup()
 {

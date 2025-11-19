@@ -12,8 +12,8 @@
 #endif
 
 #ifndef STASSID
-#define STASSID "WIFI-SSID"
-#define STAPSK "WIFI-PASSWORD"
+#define STASSID "Curiosity_IOT"
+#define STAPSK "mamuniot"
 #endif
 
 const char *ssid = STASSID;
@@ -36,13 +36,15 @@ void setup()
      network-issues with your other WiFi-devices on your WiFi-network. */
 
   WiFi.mode(WIFI_STA);
-
+  // esp_wifi_set_max_tx_power(40);
   // WiFi.disconnect();
   // WiFi.enableInsecureWEP(true);
   // WiFi.disconnect();
+  // WiFi.setTxPower(WIFI_POWER_19_5dBm);
+  delay(100);
 
   WiFi.begin(ssid, password);
-
+  // delay(100);
   // WiFi.printDiag(Serial);
   Serial.printf("Connection status: %d\n", WiFi.status());
 
@@ -60,4 +62,13 @@ void setup()
 
 void loop()
 {
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+  }else {
+    Serial.println("WiFi not connected");
+  }
+  delay(5000);
 }
