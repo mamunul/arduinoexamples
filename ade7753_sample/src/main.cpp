@@ -1,64 +1,41 @@
 #include <Arduino.h>
+#include <SPI.h>
+
+
 #include <ADE7753.h>
+const uint32_t CLK_FREQ = 3579545; // ADE7753 clock frequency in Hz
+// ADE7753 meter; // Default constructor
+// SPIClass Hspi(SPI);
+ADE7753 meter(SPI, 15, 1000000); // Constructor for non-default SPI bus and frequency
 
-// put function declarations here:
-ADE7753 meter; // Default constructor
-// SPIClass Hspi(HSPI);
-// ADE7753 meter(Hspi, 15, 4000000);  // Constructor for non-default SPI bus and frequency
-
-// Clock frequency and calibration coeficient
-const uint32_t CLK_FREQ = 3579545;
-const double AENERGY_COEF = 1.0;
-const double VAENERGY_COEF = 1.0;
-const double IRMS_COEF = 1.0;
-const double VRMS_COEF = 1.0;
-
-void setup() {
-  // put your setup code here, to run once:
+void setup(){
   Serial.begin(115200);
   meter.begin();
 
-  /*
-    Set channel 1 (current) and channel 2 (voltage) gain
-    ADE7753_GAIN_1
-    ADE7753_GAIN_2
-    ADE7753_GAIN_4
-    ADE7753_GAIN_8
-    ADE7753_GAIN_16
-  */
+  meter.setCh1Integrator(false);
   meter.setCh1Gain(ADE7753_GAIN_1);
   meter.setCh2Gain(ADE7753_GAIN_1);
-
-  /*
-    Set channel 1 (current) full scale
-    ADE7753_FS_0_5V   => 0.5 V
-    ADE7753_FS_0_25V  => 0.25 V
-    ADE7753_FS_0_125V => 0.125 V
-  */
   meter.setCh1FullScale(ADE7753_FS_0_5V);
-
-  Serial.println("\nAEnergy\tVAEnergy\tFrequency\tRMS Current\tRMS Voltage");
+  Serial.println("ADE7753 Initialized");
 }
 
-void loop() {
-  double AEnergy = AENERGY_COEF * meter.readAEnergy();
-  double VAEnergy = VAENERGY_COEF * meter.readVAEnergy();
+void loop(){
+  uint32_t rmsVoltage = meter.readVoltageRMS();
+  uint32_t rmsCurrent = meter.readCurrentRMS(); // 1865000
+  rmsCurrent = meter.readCurrentRMS();
+
+  Serial.print("Voltage RMS: ");
+  Serial.print((rmsVoltage/3680.0));
+  Serial.println(" V");
+
+  Serial.print("Current RMS: ");
+  Serial.print(rmsCurrent/62000.0);
+  Serial.println(" A");
+
   double Frequency = (double)(CLK_FREQ / 8.0) / meter.readPeriod();
-  double IRMS = IRMS_COEF * meter.readCurrentRMS();
-  double VRMS = VRMS_COEF * meter.readVoltageRMS();
-
-  // Show active and apparent energy, frequency, and RMS current and voltage
-  Serial.print(AEnergy);
-  Serial.print("\t");
-  Serial.print(VAEnergy);
-  Serial.print("\t");
+  Serial.print("Frequency: ");
   Serial.print(Frequency);
-  Serial.print("\t");
-  Serial.print(IRMS);
-  Serial.print("\t");
-  Serial.println(VRMS);
+  Serial.println(" Hz");
 
-  delay(1000);
+  delay(1000); // 1 Hz read rate
 }
-
-// put function definitions here:
