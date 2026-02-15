@@ -13,12 +13,12 @@ void setup()
   Serial.begin(115200);
   meter.begin();
 
-  meter.setCh1Integrator(false);
+  // meter.setCh1Integrator(false);
   meter.setCh1Gain(ADE7753_GAIN_1);
   meter.setCh2Gain(ADE7753_GAIN_1);
   meter.setCh1FullScale(ADE7753_FS_0_5V);
   Serial.println("ADE7753 Initialized");
-  meter.reset();
+  // meter.reset();
 }
 
 void loop()
@@ -52,13 +52,13 @@ void loop()
   Serial.print(rmsCurrent / 62000.0);
   Serial.println(" A");
 
-  Serial.print("Accumulated Active Energy: ");
-  Serial.print(active_power);
-  Serial.println(" VA");
-  Serial.print("Active Energy Change: ");
-  Serial.print(active_power - last_active_power);
-  Serial.println(" VA");
-  last_active_power = active_power;
+  // Serial.print("Accumulated Active Energy: ");
+  // Serial.print(active_power);
+  // Serial.println(" VA");
+  // Serial.print("Active Energy Change: ");
+  // Serial.print(active_power - last_active_power);
+  // Serial.println(" VA");
+  // last_active_power = active_power;
 
   // Serial.print("Accumulated Apparent Energy: ");
   // Serial.print(apparent_power);
@@ -73,5 +73,5 @@ void loop()
   Serial.print(Frequency);
   Serial.println(" Hz");
 
-  delay(15000); // 1 Hz read rate
+  delay(1500); // 1 Hz read rate
 }

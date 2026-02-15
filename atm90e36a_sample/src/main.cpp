@@ -2,7 +2,16 @@
 #include <SPI.h>
 #include <ATM90E36.h>
 
-#define CS_PIN 10
+#define CS_PIN 15
+#define DEBUG_SERIAL
+#define ESP8266
+
+// SPIMODE must be zero
+//  SPISettings settings(200000, MSBFIRST, SPI_MODE0);
+// CommEnergyIC(WRITE, MMode0, 0x0087); // Mode Config (60 Hz, 3P4W)
+// CommEnergyIC(WRITE, MMode1, 0x0000); // 0x5555 (x2) // 0x0000 (1x)
+// function prototypes
+void checkRegisters();
 
 ATM90E36 meter(CS_PIN);
 
@@ -11,12 +20,21 @@ void setup()
   Serial.begin(115200);
   meter.begin();
 
-  meter.calibrationError(); // Check for calibration errors
-  Serial.println("ATM90E36 Sample");
+  checkRegisters();
 }
 
-void loop()
+void checkRegisters()
 {
+
+  bool error = meter.calibrationError(); // Check for calibration errors
+  if (error)
+  {
+    Serial.println("Calibration error detected!");
+  }
+  else
+  {
+    Serial.println("ATM90E36 Calibration OK.");
+  }
   /*Repeatedly fetch some values from the ATM90E36 */
   int sys0 = meter.GetSysStatus0();
   int sys1 = meter.GetSysStatus1();
@@ -29,29 +47,48 @@ void loop()
   Serial.println("E0:0x" + String(en0, HEX));
   delay(10);
   Serial.println("E1:0x" + String(en1, HEX));
-  double voltageA = meter.GetLineVoltageA();
-  delay(10);
-  double currentA = meter.GetLineCurrentA();
-  Serial.println("IA:" + String(currentA) + "A");
-  delay(10);
-  double freq = meter.GetFrequency();
-  delay(10);
-  Serial.println("f" + String(freq) + "Hz");
-  double reactive_power = meter.GetReactivePowerA();
-  delay(10);
-  Serial.println("Reactive Power:" + String(reactive_power) + "VAR");
-  delay(10);
-  double apparent_power = meter.GetApparentPowerA();
-  delay(10);
-  Serial.println("Apparent Power:" + String(apparent_power) + "VA");
+
+  int checksum0 = meter.GetValueRegister(MMode0); // Example of reading a register value (GainA)
+  Serial.println("MMode0:0x" + String(checksum0, HEX));
   delay(10);
 
-  double power = meter.GetActivePowerA();
+  int checksum3 = meter.GetValueRegister(MMode1); // Example of reading a register value (GainA)
+  Serial.println("MMode1:0x" + String(checksum3, HEX));
   delay(10);
-  Serial.println("Active Power:" + String(power) + "W");
+
+  int adjStart = meter.GetValueRegister(AdjStart); // Example of reading a register value (GainA)
+  Serial.println("AdjStart:0x" + String(adjStart, HEX));
   delay(10);
-  double pf = meter.GetPowerFactorA();
+
+  int ugainA = meter.GetValueRegister(UgainA); // Example of reading a register value (GainA)
+  Serial.println("UgainA:0x" + String(ugainA, HEX));
   delay(10);
-  Serial.println("Power Factor:" + String(pf));
-  delay(1000);
+
+  int uoffsetA = meter.GetValueRegister(UoffsetA); // Example of reading a register value (PoffsetA)
+  Serial.println("UoffsetA:0x" + String(uoffsetA, HEX));
+  delay(10);
+}
+
+void readValues()
+{
+  double voltageA = meter.GetLineVoltageA();
+  double currentA = meter.GetLineCurrentA();
+  double activePowerA = meter.GetActivePowerA();
+  double reactivePowerA = meter.GetReactivePowerA();
+  double apparentPowerA = meter.GetApparentPowerA();
+
+  Serial.println("Voltage A: " + String(voltageA) + " V");
+  Serial.println("Current A: " + String(currentA) + " A");
+  Serial.println("Active Power A: " + String(activePowerA) + " W");
+  Serial.println("Reactive Power A: " + String(reactivePowerA) + " VAR");
+  Serial.println("Apparent Power A: " + String(apparentPowerA) + " VA");
+  Serial.println();
+
+}
+
+void loop()
+{
+
+  readValues();
+  delay(1500);
 }
