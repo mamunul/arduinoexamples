@@ -5,13 +5,24 @@
 const uint32_t CLK_FREQ = 3579545; // ADE7753 clock frequency in Hz
 // ADE7753 meter; // Default constructor
 // SPIClass Hspi(SPI);
-ADE7753 meter(SPI, 15, 1000000); // Constructor for non-default SPI bus and frequency
+ADE7753 meter(SPI, 15, 200000); // Constructor for non-default SPI bus and frequency
 uint32_t last_active_power = 0;
 uint32_t last_apparent_power = 0;
 void setup()
 {
   Serial.begin(115200);
   meter.begin();
+
+  uint16_t mode = meter.readMode();
+  Serial.print("Mode Register: 0x");
+  Serial.println(mode, HEX);
+
+  uint16_t cfnum = meter.readCFNum();
+  uint16_t cfden = meter.readCFDen();
+  Serial.print("CFNum: 0x");
+  Serial.println(cfnum, HEX);
+  Serial.print("CFDen: 0x");
+  Serial.println(cfden, HEX);
 
   // meter.setCh1Integrator(false);
   meter.setCh1Gain(ADE7753_GAIN_1);
@@ -23,18 +34,24 @@ void setup()
 
 void loop()
 {
+
+  // int32_t volt = meter.readWaveForm(); // Read waveform to update internal registers before reading RMS and energy values
+  // Serial.print("Raw Waveform: ");
+  // Serial.println(volt);
+
+ 
+
   uint32_t rmsVoltage = meter.readVoltageRMS();
   uint32_t rmsCurrent = meter.readCurrentRMS(); // 1865000
   uint32_t active_power = meter.readAEnergy();
   uint32_t apparent_power = meter.readVAEnergy();
 
-  uint16_t status = meter.status() ; // Clear any pending interrupts
-  Serial.print("Status in binary: 0b");
-  Serial.println(status,BIN);
+  // uint16_t status = meter.status(); // Clear any pending interrupts
+  // Serial.print("Status in binary: 0b");
+  // Serial.println(status, BIN);
 
-  Serial.print("7th bit: ");
-  Serial.println((status & (1<<7)) ? "1" : "0");
-
+  // Serial.print("7th bit: ");
+  // Serial.println((status & (1 << 7)) ? "1" : "0");
 
   Serial.print("Raw Voltage RMS: ");
   Serial.print(rmsVoltage);
@@ -44,13 +61,13 @@ void loop()
   Serial.print((rmsVoltage / 3680.0));
   Serial.println(" V");
 
-  Serial.print("Raw Current RMS: ");
-  Serial.print(rmsCurrent);
-  Serial.println(" (62000 = 1 A)");
+  // Serial.print("Raw Current RMS: ");
+  // Serial.print(rmsCurrent);
+  // Serial.println(" (62000 = 1 A)");
 
-  Serial.print("Current RMS: ");
-  Serial.print(rmsCurrent / 62000.0);
-  Serial.println(" A");
+  // Serial.print("Current RMS: ");
+  // Serial.print(rmsCurrent / 62000.0);
+  // Serial.println(" A");
 
   // Serial.print("Accumulated Active Energy: ");
   // Serial.print(active_power);
@@ -68,10 +85,10 @@ void loop()
   // Serial.println(" VAr");
   // last_apparent_power = apparent_power;
 
-  double Frequency = (double)(CLK_FREQ / 8.0) / meter.readPeriod();
-  Serial.print("Frequency: ");
-  Serial.print(Frequency);
-  Serial.println(" Hz");
+  // double Frequency = (double)(CLK_FREQ / 8.0) / meter.readPeriod();
+  // Serial.print("Frequency: ");
+  // Serial.print(Frequency);
+  // Serial.println(" Hz");
 
   delay(1500); // 1 Hz read rate
 }

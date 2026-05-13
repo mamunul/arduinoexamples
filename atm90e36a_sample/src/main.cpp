@@ -48,31 +48,45 @@ void checkRegisters()
   delay(10);
   Serial.println("E1:0x" + String(en1, HEX));
 
-  int checksum0 = meter.GetValueRegister(MMode0); // Example of reading a register value (GainA)
+  int checksum0 = meter.GetValueRegister(MMode0); // Example of reading a register value (GainA) default: 0x87
   Serial.println("MMode0:0x" + String(checksum0, HEX));
   delay(10);
 
-  int checksum3 = meter.GetValueRegister(MMode1); // Example of reading a register value (GainA)
+  int checksum3 = meter.GetValueRegister(MMode1); // Example of reading a register value (GainA) default: 0x0000
   Serial.println("MMode1:0x" + String(checksum3, HEX));
   delay(10);
 
-  int adjStart = meter.GetValueRegister(AdjStart); // Example of reading a register value (GainA)
+  int adjStart = meter.GetValueRegister(AdjStart); // Example of reading a register value (GainA) default: 0x6886
   Serial.println("AdjStart:0x" + String(adjStart, HEX));
   delay(10);
 
-  int ugainA = meter.GetValueRegister(UgainA); // Example of reading a register value (GainA)
+  int ugainA = meter.GetValueRegister(UgainA); // Example of reading a register value (GainA) default: 0xce40
   Serial.println("UgainA:0x" + String(ugainA, HEX));
   delay(10);
 
-  int uoffsetA = meter.GetValueRegister(UoffsetA); // Example of reading a register value (PoffsetA)
+  int igainA = meter.GetValueRegister(IgainA); // Example of reading a register value (GainA) default: 0x6886
+  Serial.println("IgainA:0x" + String(igainA, HEX));
+  delay(10);
+
+  int uoffsetA = meter.GetValueRegister(UoffsetA); // Example of reading a register value (PoffsetA) default: 0x0000
   Serial.println("UoffsetA:0x" + String(uoffsetA, HEX));
   delay(10);
+  // meter.setRegisterValue(IoffsetA, 0x0022); // Example of writing a register value (PoffsetA) default: 0x0000
 }
 
 void readValues()
 {
+  int uoffsetA = meter.GetValueRegister(UoffsetA); // Example of reading a register value (PoffsetA) default: 0x0000
+  Serial.println("UoffsetA:0x" + String(uoffsetA, HEX));
+  delay(10);
+
+  int ioffsetA = meter.GetValueRegister(IoffsetA); // Example of reading a register value (IoffsetA) default: 0x0000
+  Serial.println("IoffsetA:0x" + String(ioffsetA, HEX));
+  delay(10);
+
   double voltageA = meter.GetLineVoltageA();
   double currentA = meter.GetLineCurrentA();
+
   double activePowerA = meter.GetActivePowerA();
   double reactivePowerA = meter.GetReactivePowerA();
   double apparentPowerA = meter.GetApparentPowerA();
